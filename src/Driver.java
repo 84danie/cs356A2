@@ -15,6 +15,12 @@ public class Driver {
 		System.out.println(u1.getFollowers());
 		System.out.println(u2.getFollowings());
 		
+		User u3 = new User("Bob");
+		u1.addObserver(u3);
+		System.out.println(u1.getFollowers());
+		System.out.println(u2.getFollowings());
+		System.out.println(u3.getFollowings());
+		
 
 	}
 
