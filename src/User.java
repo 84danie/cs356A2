@@ -10,7 +10,7 @@ import java.util.UUID;
  * User class. Users can follow and be followed by other users.
  *
  */
-public class User extends Observable implements Observer{
+public class User extends Observable implements Observer, UserGroup{
 	private String id;
 	private String visibleID;
 	private List<User> followers;
@@ -91,4 +91,10 @@ public class User extends Observable implements Observer{
 	public List<String> getNewsFeed() {
 		return newsFeed;
 	}
+	@Override
+	public String print(String space){
+		System.out.println("Check");
+		return visibleID+"\n";
+	}
+	
 }
