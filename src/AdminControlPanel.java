@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -53,29 +54,20 @@ public class AdminControlPanel {
 		frame.setLayout(layout);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		
-		
-		CompositeUserGroup Group1 = new CompositeUserGroup("Group 1");
-		CompositeUserGroup Group2 = new CompositeUserGroup("Group 2");
-
+		CompositeUserGroup root = new CompositeUserGroup("Root");
+		CompositeUserGroup g1 = new CompositeUserGroup("CS480");
 		User u1 = new User("Joe");
-		User u2 = new User("Joe2");
-		Group1.add(u2);
-		User u3 = new User("Joe2");
-		Root.add(u1);
-		Group2.add(u3);
-		Root.add(Group1);
-		Group1.add(Group2);
-		Root.add(u1);
-		Root.add(Group2);
-
+		User u2 = new User("Bob");
+		
+		g1.add(u1);
+		root.add(g1);
+		root.add(u2);
 		
 	       
-
+		JTree tree = new JTree(root);
 		//Add the ubiquitous "Hello World" label.
-		tree = new JTextArea(Root.print(""));
-		frame.add(tree);
+		JScrollPane treeView = new JScrollPane(tree);
+		frame.add(treeView);
 		frame.add(new JButton("Test"));
 
 		//Display the window.

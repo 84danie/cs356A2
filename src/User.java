@@ -1,10 +1,14 @@
 
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.UUID;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 /**
  * User class. Users can follow and be followed by other users.
@@ -16,6 +20,7 @@ public class User extends Observable implements Observer, UserGroup{
 	private List<User> followers;
 	private List<User> followings;
 	private List<String> newsFeed;
+	private UserGroup parent;
 
 	/**
 	 * Constructor for User.
@@ -26,6 +31,7 @@ public class User extends Observable implements Observer, UserGroup{
 		this.visibleID = visibleID;
 		this.followers = new ArrayList<User>();
 		this.followings = new ArrayList<User>();
+		parent = null;
 	}
 	/** 
 	 * Add a new Observer (follower) to observe this User.
@@ -92,9 +98,46 @@ public class User extends Observable implements Observer, UserGroup{
 		return newsFeed;
 	}
 	@Override
-	public String print(String space){
-		System.out.println("Check");
-		return visibleID+"\n";
+	public Enumeration children() {
+		// TODO Auto-generated method stub
+		return null;
 	}
+	@Override
+	public boolean getAllowsChildren() {
+		return false;
+	}
+	@Override
+	public TreeNode getChildAt(int childIndex) {
+		if(childIndex!=0)
+			return null;
+		else
+			return this;
+	}
+	@Override
+	public int getChildCount() {
+		return 0;
+	}
+	@Override
+	public int getIndex(TreeNode node) {
+		if(node.equals(this))
+			return 0;
+		else
+			return -1;
+	}
+	@Override
+	public TreeNode getParent() {
+		return parent;
+	}
+	@Override
+	public boolean isLeaf() {
+		return true;
+	}
+	@Override
+	public void setParent(UserGroup u) {
+		parent = (UserGroup) u.getParent();
+		
+	}
+	
+	
 	
 }
