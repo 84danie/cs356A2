@@ -1,11 +1,9 @@
 import java.util.List;
 
-public interface UserGroup {
-	/**
-	 * Printing method
-	 * @param space
-	 * @return
-	 */
-	public String print(String space);
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
+public interface UserGroup extends TreeNode{
+	public void setParent(UserGroup u);
+	
 }
