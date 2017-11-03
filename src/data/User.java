@@ -1,3 +1,4 @@
+package data;
 
 
 import java.util.ArrayList;
@@ -6,21 +7,21 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.UUID;
-
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
+
+import stats.CountElementVisitor;
 
 /**
  * User class. Users can follow and be followed by other users.
  *
  */
-public class User extends Observable implements Observer, UserGroup{
+public class User extends Observable implements Observer, Component{
 	private String id;
 	private String visibleID;
 	private List<User> followers;
 	private List<User> followings;
 	private List<String> newsFeed;
-	private UserGroup parent;
+	private Component parent;
 
 	/**
 	 * Constructor for User.
@@ -85,6 +86,7 @@ public class User extends Observable implements Observer, UserGroup{
 	public String toString() {
 		return visibleID;
 	}
+	
 	/**
 	 * @return the Users this User is following
 	 */
@@ -97,9 +99,11 @@ public class User extends Observable implements Observer, UserGroup{
 	public List<String> getNewsFeed() {
 		return newsFeed;
 	}
+	
+	/*==============TreeNode Methods==============*/
+	
 	@Override
-	public Enumeration children() {
-		// TODO Auto-generated method stub
+	public Enumeration<Component> children() {
 		return null;
 	}
 	@Override
@@ -133,9 +137,13 @@ public class User extends Observable implements Observer, UserGroup{
 		return true;
 	}
 	@Override
-	public void setParent(UserGroup u) {
-		parent = (UserGroup) u.getParent();
+	public void setParent(Component u) {
+		parent = (Component) u.getParent();
 		
+	}
+	@Override
+	public void accept(CountElementVisitor visitor) {
+		visitor.visit(this);	
 	}
 	
 	
