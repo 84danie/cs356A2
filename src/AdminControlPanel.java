@@ -1,30 +1,21 @@
 
 
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Enumeration;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreeSelectionModel;
-
-import data.MyComponent;
 import data.User;
 import data.UserGroup;
 import stats.CountElementUserGroupVisitor;
@@ -37,7 +28,7 @@ import stats.CountElementVisitor;
  * Admin Control Panel class can be instantiated at a time. (Singleton pattern)
  *
  */
-public class AdminControlPanel implements ActionListener{
+public class AdminControlPanel implements ActionListener, FocusListener{
 	private static AdminControlPanel instance = null;
 	private JTree tree;
 	private JButton GetTotalUsers;
@@ -45,7 +36,7 @@ public class AdminControlPanel implements ActionListener{
 	private JButton OpenUserView;
 	private JButton GetTotalMessages;
 	private JButton GetPositivePercent;
-	private MyComponent root;
+	private UserGroup root;
 	private JPanel rightPanel;
 	private JPanel createPanel;
 	private JPanel contentPanel;
@@ -53,6 +44,9 @@ public class AdminControlPanel implements ActionListener{
 	private JTextField groupId;
 	private JButton AddUser;
 	private JButton AddGroup;
+	private String newUserId = "";
+	private String newUserGroupId = "";
+	private DefaultTreeModel treeModel;
 
 	/**
 	 * Private constructor
@@ -82,7 +76,7 @@ public class AdminControlPanel implements ActionListener{
 		mainFrame.setLayout(new GridLayout(1,2));
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		/*//UserGroup root = new UserGroup("Root");
+		//UserGroup root = new UserGroup("Root");
 		UserGroup g1 = new UserGroup("CS480");
 		User u1 = new User("Joe");
 		User u2 = new User("Bob");
@@ -95,13 +89,12 @@ public class AdminControlPanel implements ActionListener{
 		root.add(u2);
 		g2.add(u3);
 		g1.add(g2);
-		root.add(g3);*/
+		root.add(g3);
 
-
-		tree = new JTree(root);
-		for (int i = 0; i < tree.getRowCount(); i++) {
-			tree.expandRow(i);
-		}
+		treeModel = new DefaultTreeModel(root);
+		
+		tree = new JTree(treeModel);
+		
 		tree.setRootVisible(true);
 		//Add the ubiquitous "Hello World" label.
 		JScrollPane treeView = new JScrollPane(tree);
@@ -134,6 +127,9 @@ public class AdminControlPanel implements ActionListener{
 		AddGroup = new JButton("Add Group");
 		AddUser.addActionListener(this);
 		AddGroup.addActionListener(this);
+		userId.addFocusListener(this);
+		groupId.addActionListener(this);
+		
 		
 		createPanel.add(userId);
 		createPanel.add(AddUser);
@@ -183,6 +179,42 @@ public class AdminControlPanel implements ActionListener{
 				JOptionPane.showMessageDialog(null,"goodr");
 			}
 		}
+		else if(arg0.getSource() == AddUser){
+			TreeNode node = (TreeNode) tree.getLastSelectedPathComponent();
 
+			if (node == null){
+				root.add(new User(newUserId));
+				treeModel.reload(root);
+				expandAll();
+			}
+			else if(!node.isLeaf()){
+				//open user view
+				((UserGroup) node).add((new User(newUserId)));
+				JOptionPane.showMessageDialog(null,"goodr");
+				treeModel.reload(root);
+				expandAll();
+			}
+		}
+
+	}
+	private void expandAll(){
+		for (int i = 0; i < tree.getRowCount(); i++) {
+			tree.expandRow(i);
+		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent arg0) {
+		//nothing to be done here
+	}
+	@Override
+	public void focusLost(FocusEvent arg0) {
+		if(arg0.getSource() == userId){
+			newUserId = userId.getText();
+		}
+		else if(arg0.getSource() == groupId){
+			newUserGroupId = groupId.getText();
+		}
+		
 	}
 }

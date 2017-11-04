@@ -56,7 +56,7 @@ public class UserGroup implements MyComponent{
 	@Override
 	public boolean isLeaf() {
 		// TODO Auto-generated method stub
-		return childUserGroups.isEmpty();
+		return false;
 	}
 	@Override
 	public void setParent(MyComponent u) {
