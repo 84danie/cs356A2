@@ -1,3 +1,4 @@
+package data;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -5,17 +6,19 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-public class CompositeUserGroup implements UserGroup{
-	private String id;
-	private List<UserGroup> childUserGroups;
-	private UserGroup parent;
+import stats.CountElementVisitor;
 
-	public CompositeUserGroup(String id) {
+public class UserGroup implements MyComponent{
+	private String id;
+	private List<MyComponent> childUserGroups;
+	private MyComponent parent;
+
+	public UserGroup(String id) {
 		this.id = id;
-		this.childUserGroups = new ArrayList<UserGroup>();
+		this.childUserGroups = new ArrayList<MyComponent>();
 		parent = null;
 	}
-	public void add(UserGroup u){
+	public void add(MyComponent u){
 		childUserGroups.add(u);
 		u.setParent(this);
 	}
@@ -23,9 +26,12 @@ public class CompositeUserGroup implements UserGroup{
 	public String toString(){
 		return id;
 	}
+	public List<MyComponent> getChildUserGroup(){
+		return childUserGroups;
+	}
 	@Override
-	public Enumeration<UserGroup> children() {
-		return (Enumeration<UserGroup>) childUserGroups;
+	public Enumeration<MyComponent> children() {
+		return (Enumeration<MyComponent>) childUserGroups;
 	}
 	@Override
 	public boolean getAllowsChildren() {
@@ -53,9 +59,15 @@ public class CompositeUserGroup implements UserGroup{
 		return childUserGroups.isEmpty();
 	}
 	@Override
-	public void setParent(UserGroup u) {
-		this.parent = (UserGroup) u.getParent();
+	public void setParent(MyComponent u) {
+		this.parent = (MyComponent) u.getParent();
 		
+	}
+	@Override
+	public void accept(CountElementVisitor visitor) {
+		visitor.visit(this);
+		for(MyComponent u : childUserGroups)
+			u.accept(visitor);		
 	}
 	
 }
