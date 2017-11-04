@@ -96,6 +96,7 @@ public class AdminControlPanel implements ActionListener, FocusListener{
 		tree = new JTree(treeModel);
 		
 		tree.setRootVisible(true);
+		updateTree();
 		//Add the ubiquitous "Hello World" label.
 		JScrollPane treeView = new JScrollPane(tree);
 		mainFrame.add(treeView);
@@ -128,22 +129,20 @@ public class AdminControlPanel implements ActionListener, FocusListener{
 		AddUser.addActionListener(this);
 		AddGroup.addActionListener(this);
 		userId.addFocusListener(this);
-		groupId.addActionListener(this);
+		groupId.addFocusListener(this);
 		
 		
 		createPanel.add(userId);
 		createPanel.add(AddUser);
 		createPanel.add(groupId);
 		createPanel.add(AddGroup);
-		
-		
 	}
 	private void buildContentPanel(){
 		contentPanel = new JPanel(new GridLayout(2,2));
-		GetTotalUsers = new JButton("Get Total Users");
-		GetTotalUserGroups = new JButton("Get Total User Groups");
-		GetTotalMessages = new JButton("Get Total Messages");
-		GetPositivePercent = new JButton("Get Positive Percent");
+		GetTotalUsers = new JButton("Total Users");
+		GetTotalUserGroups = new JButton("Total User Groups");
+		GetTotalMessages = new JButton("Total Messages");
+		GetPositivePercent = new JButton("Positive Percentage");
 		GetTotalUsers.addActionListener(this);
 		GetTotalUserGroups.addActionListener(this);
 		GetTotalMessages.addActionListener(this);
@@ -174,9 +173,9 @@ public class AdminControlPanel implements ActionListener, FocusListener{
 				JOptionPane.showMessageDialog(null,"Please Select a User");
 				return;
 			}
-			else if(node.isLeaf() && node instanceof User){
+			else if(node.isLeaf()){ //always a user
 				//open user view
-				JOptionPane.showMessageDialog(null,"goodr");
+				JOptionPane.showMessageDialog(null,"good");
 			}
 		}
 		else if(arg0.getSource() == AddUser){
@@ -184,23 +183,34 @@ public class AdminControlPanel implements ActionListener, FocusListener{
 
 			if (node == null){
 				root.add(new User(newUserId));
-				treeModel.reload(root);
-				expandAll();
+				updateTree();
 			}
 			else if(!node.isLeaf()){
-				//open user view
 				((UserGroup) node).add((new User(newUserId)));
-				JOptionPane.showMessageDialog(null,"goodr");
-				treeModel.reload(root);
-				expandAll();
+				JOptionPane.showMessageDialog(null,"New user successfully created.");
+				updateTree();
+			}
+		}
+		else if(arg0.getSource() == AddGroup){
+			TreeNode node = (TreeNode) tree.getLastSelectedPathComponent();
+
+			if (node == null){
+				root.add(new UserGroup(newUserGroupId));
+				updateTree();
+			}
+			else if(!node.isLeaf()){
+				((UserGroup) node).add((new UserGroup(newUserGroupId)));
+				JOptionPane.showMessageDialog(null,"New user group successfully created.");
+				updateTree();
 			}
 		}
 
+
 	}
-	private void expandAll(){
-		for (int i = 0; i < tree.getRowCount(); i++) {
+	private void updateTree(){
+		treeModel.reload(root);
+		for (int i = 0; i < tree.getRowCount(); i++) 
 			tree.expandRow(i);
-		}
 	}
 
 	@Override
@@ -211,9 +221,11 @@ public class AdminControlPanel implements ActionListener, FocusListener{
 	public void focusLost(FocusEvent arg0) {
 		if(arg0.getSource() == userId){
 			newUserId = userId.getText();
+			userId.setText("");
 		}
 		else if(arg0.getSource() == groupId){
 			newUserGroupId = groupId.getText();
+			groupId.setText("");
 		}
 		
 	}
