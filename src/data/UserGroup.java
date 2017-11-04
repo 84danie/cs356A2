@@ -8,17 +8,17 @@ import javax.swing.tree.TreeNode;
 
 import stats.CountElementVisitor;
 
-public class UserGroup implements Component{
+public class UserGroup implements MyComponent{
 	private String id;
-	private List<Component> childUserGroups;
-	private Component parent;
+	private List<MyComponent> childUserGroups;
+	private MyComponent parent;
 
 	public UserGroup(String id) {
 		this.id = id;
-		this.childUserGroups = new ArrayList<Component>();
+		this.childUserGroups = new ArrayList<MyComponent>();
 		parent = null;
 	}
-	public void add(Component u){
+	public void add(MyComponent u){
 		childUserGroups.add(u);
 		u.setParent(this);
 	}
@@ -26,12 +26,12 @@ public class UserGroup implements Component{
 	public String toString(){
 		return id;
 	}
-	public List<Component> getChildUserGroup(){
+	public List<MyComponent> getChildUserGroup(){
 		return childUserGroups;
 	}
 	@Override
-	public Enumeration<Component> children() {
-		return (Enumeration<Component>) childUserGroups;
+	public Enumeration<MyComponent> children() {
+		return (Enumeration<MyComponent>) childUserGroups;
 	}
 	@Override
 	public boolean getAllowsChildren() {
@@ -59,14 +59,14 @@ public class UserGroup implements Component{
 		return childUserGroups.isEmpty();
 	}
 	@Override
-	public void setParent(Component u) {
-		this.parent = (Component) u.getParent();
+	public void setParent(MyComponent u) {
+		this.parent = (MyComponent) u.getParent();
 		
 	}
 	@Override
 	public void accept(CountElementVisitor visitor) {
 		visitor.visit(this);
-		for(Component u : childUserGroups)
+		for(MyComponent u : childUserGroups)
 			u.accept(visitor);		
 	}
 	

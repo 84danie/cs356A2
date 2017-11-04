@@ -3,6 +3,6 @@ import data.User;
 import data.UserGroup;
 
 public interface CountElementVisitor {
-	public abstract void visit(UserGroup u);
-	public abstract void visit(User u);
+	public default void visit(UserGroup u){};
+	public default void visit(User u){};
 }

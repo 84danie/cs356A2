@@ -15,13 +15,13 @@ import stats.CountElementVisitor;
  * User class. Users can follow and be followed by other users.
  *
  */
-public class User extends Observable implements Observer, Component{
+public class User extends Observable implements Observer, MyComponent{
 	private String id;
 	private String visibleID;
 	private List<User> followers;
 	private List<User> followings;
 	private List<String> newsFeed;
-	private Component parent;
+	private MyComponent parent;
 
 	/**
 	 * Constructor for User.
@@ -103,7 +103,7 @@ public class User extends Observable implements Observer, Component{
 	/*==============TreeNode Methods==============*/
 	
 	@Override
-	public Enumeration<Component> children() {
+	public Enumeration<MyComponent> children() {
 		return null;
 	}
 	@Override
@@ -137,8 +137,8 @@ public class User extends Observable implements Observer, Component{
 		return true;
 	}
 	@Override
-	public void setParent(Component u) {
-		parent = (Component) u.getParent();
+	public void setParent(MyComponent u) {
+		parent = (MyComponent) u.getParent();
 		
 	}
 	@Override
