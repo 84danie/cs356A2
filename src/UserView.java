@@ -13,7 +13,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.tree.DefaultTreeModel;
 
 import data.MyComponent;
@@ -21,9 +20,8 @@ import data.User;
 import data.UserGroup;
 
 public class UserView implements ActionListener, FocusListener{
-	private JList followers;
+	private JList<User> followers;
 	private JList newsFeed;
-	private ListModel followersModel;
 	private JButton followButton;
 	private JButton tweetButton;
 	private JPanel followPanel;
@@ -36,23 +34,20 @@ public class UserView implements ActionListener, FocusListener{
 	private DefaultTreeModel treeModel;
 	private User user;
 	private AdminControlPanel admin;
-	
+
 	public UserView(User user, AdminControlPanel admin){
 		this.user = user;
-		User another = new User("bob");
 		this.admin = admin;
-		another.addObserver(user);
-		System.out.println(admin.getRoot().getChildUserGroup());
 	}
 	public void display(){
 		JFrame mainFrame = new JFrame(user.toString());	
-		
+
 		mainFrame.setLayout(new GridLayout(2,1));
 		buildFollowPanel();
 		buildNewsFeedPanel();
 		mainFrame.add(followPanel);
 		mainFrame.add(newsFeedPanel);
-		
+
 		mainFrame.setPreferredSize(new Dimension(300, 200));
 		mainFrame.pack();
 		mainFrame.setVisible(true);
@@ -73,8 +68,8 @@ public class UserView implements ActionListener, FocusListener{
 			followers = new JList();
 		JScrollPane scroller = new JScrollPane(followers);
 		followPanel.add(scroller);
-		
-		
+
+
 	}
 	private void buildNewsFeedPanel(){
 		newsFeedPanel = new JPanel(new GridLayout(2,1));
@@ -105,25 +100,31 @@ public class UserView implements ActionListener, FocusListener{
 		else if(e.getSource() == tweet){
 			tweetMessage = tweet.getText();
 		}
-		
+
 	}
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == followButton){
 			List<MyComponent> currentList = admin.getRoot().getChildUserGroup();
-			User follow = new User(followUser);
-			((User) currentList.get(currentList.indexOf(follow))).addObserver(user);
-			DefaultListModel model = new DefaultListModel();
-			for(User u : user.getFollowings())
-				model.addElement(u);
-			followers.setModel(model);
-			
+			//User follow = new User(followUser);
+			//((User) currentList.get(currentList.indexOf(follow))).addObserver(user);
+			User follow = admin.getRoot().getUser(followUser);
+			if(follow!=null){
+				follow.addObserver(user);
+				DefaultListModel<User> model = new DefaultListModel<User>();
+				for(User u : user.getFollowings())
+					model.addElement(u);
+				followers.setModel(model);
+				userId.setText("");
+			}
+
 		}
 		else if(arg0.getSource() == tweetButton){
 			user.postMessage(tweetMessage);	
 			newsFeed.setModel(user.getNewsFeed());
+			tweet.setText("");
 		}
-		
+
 	}
-	
+
 }

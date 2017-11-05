@@ -13,4 +13,5 @@ public class CountElementUserVisitor implements CountElementVisitor{
 	public int getUserCount(){
 		return userCount;
 	}
+	
 }

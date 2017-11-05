@@ -30,7 +30,8 @@ public class User extends Observable implements Observer, MyComponent{
 	 * @param visibleID the visible ID of this User.
 	 */
 	public User(String visibleID) {
-		this.id = UUID.randomUUID().toString();
+		if(visibleID.isEmpty())
+			throw new IllegalArgumentException();
 		this.visibleID = visibleID;
 		this.followers = new ArrayList<User>();
 		this.followings = new ArrayList<User>();
@@ -53,6 +54,7 @@ public class User extends Observable implements Observer, MyComponent{
 	 * @param message the message to be posted.
 	 */
 	public void postMessage(String message){
+		message = "@"+visibleID+" "+message;
 		if(message!=null){
 			newsFeed.add(0,message);
 			setChanged();
@@ -104,7 +106,7 @@ public class User extends Observable implements Observer, MyComponent{
 	public DefaultListModel<String> getNewsFeed() {
 		return newsFeed;
 	}
-	
+
 
 	/*==============TreeNode Methods==============*/
 
@@ -173,6 +175,18 @@ public class User extends Observable implements Observer, MyComponent{
 	@Override
 	public void accept(CountElementVisitor visitor) {
 		visitor.visit(this);	
+	}
+	@Override
+	public User getUser(String id) {
+		if(this.visibleID.equalsIgnoreCase(id.trim()))
+			return this;
+		return null;
+	}
+	@Override
+	public boolean contains(MyComponent c) {
+		if(c instanceof User)
+			return ((User)c).equals(this);
+		return false;
 	}
 
 

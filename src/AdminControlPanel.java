@@ -166,28 +166,40 @@ public class AdminControlPanel implements ActionListener, FocusListener{
 			TreeNode node = (TreeNode) tree.getLastSelectedPathComponent();
 
 			if (node == null){
-				root.add(new User(newUserId));
-				updateTree();
-				userId.setText("");
+				if(root.add(new User(newUserId))){
+					updateTree();
+					userId.setText("");
+				}
+				else
+					JOptionPane.showMessageDialog(null,"User already exists.");
 			}
 			else if(!node.isLeaf()){
-				((UserGroup) node).add((new User(newUserId)));
-				updateTree();
-				userId.setText("");
+				if(((UserGroup) node).add((new User(newUserId)))){
+					updateTree();
+					userId.setText("");
+				}
+				else
+					JOptionPane.showMessageDialog(null,"User already exists.");
 			}
 		}
 		else if(arg0.getSource() == AddGroup){
 			TreeNode node = (TreeNode) tree.getLastSelectedPathComponent();
 
 			if (node == null){
-				root.add(new UserGroup(newUserGroupId));
-				updateTree();
-				groupId.setText("");
+				if(root.add(new UserGroup(newUserGroupId))){
+					updateTree();
+					groupId.setText("");
+				}
+				else
+					JOptionPane.showMessageDialog(null,"User group already exists.");
 			}
 			else if(!node.isLeaf()){
-				((UserGroup) node).add((new UserGroup(newUserGroupId)));
-				updateTree();
-				groupId.setText("");
+				if(((UserGroup) node).add((new UserGroup(newUserGroupId)))){
+					updateTree();
+					groupId.setText("");
+				}
+				else
+					JOptionPane.showMessageDialog(null,"User group already exists.");
 			}
 		}
 		else if(arg0.getSource() == GetTotalMessages){
@@ -211,11 +223,11 @@ public class AdminControlPanel implements ActionListener, FocusListener{
 	public void focusLost(FocusEvent arg0) {
 		if(arg0.getSource() == userId){
 			newUserId = userId.getText();
-			
+
 		}
 		else if(arg0.getSource() == groupId){
 			newUserGroupId = groupId.getText();
-			
+
 		}
 
 	}
