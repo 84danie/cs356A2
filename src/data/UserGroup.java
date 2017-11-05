@@ -20,7 +20,7 @@ public class UserGroup implements MyComponent{
 		parent = null;
 	}
 	public boolean add(MyComponent u){
-		if(!contains(u)){
+		if(!getRoot(this).contains(u)){
 			childUserGroups.add(u);
 			u.setParent(this);
 			return true;
@@ -65,7 +65,7 @@ public class UserGroup implements MyComponent{
 	}
 	@Override
 	public void setParent(MyComponent u) {
-		this.parent = (MyComponent) u.getParent();
+		this.parent = (MyComponent) u;
 
 	}
 	@Override
@@ -85,15 +85,19 @@ public class UserGroup implements MyComponent{
 		}
 		return null;
 	}
+	private UserGroup getRoot(UserGroup c){
+		if(c.getParent()==null)
+			return c;
+		return getRoot((UserGroup) c.getParent());
+	}
 	@Override
 	public boolean contains(MyComponent c) {
 		if(this.equals(c))
 			return true;
-		if(!childUserGroups.isEmpty()){
-			for(MyComponent u : childUserGroups){
-				if(u.contains(c))
-					return true;
-			}
+		
+		for(MyComponent u : childUserGroups){
+			if(u.contains(c))
+				return true;
 		}
 		return false;
 	}
@@ -113,5 +117,5 @@ public class UserGroup implements MyComponent{
 			return false;
 		return true;
 	}
-	
+
 }

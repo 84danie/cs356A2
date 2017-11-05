@@ -22,7 +22,7 @@ public class User extends Observable implements Observer, MyComponent{
 	private String visibleID;
 	private List<User> followers;
 	private List<User> followings;
-	private DefaultListModel<String> newsFeed;
+	private DefaultListModel<Message> newsFeed;
 	private MyComponent parent;
 
 	/**
@@ -35,7 +35,7 @@ public class User extends Observable implements Observer, MyComponent{
 		this.visibleID = visibleID;
 		this.followers = new ArrayList<User>();
 		this.followings = new ArrayList<User>();
-		this.newsFeed = new DefaultListModel<String>();
+		this.newsFeed = new DefaultListModel<Message>();
 		parent = null;
 	}
 	/** 
@@ -44,17 +44,19 @@ public class User extends Observable implements Observer, MyComponent{
 	 * @param o the User that will follow this User
 	 */
 	public void addObserver(User o){
-		super.addObserver(o);
-		followers.add((User)o);
-		((User)o).followings.add(this); 
+		if(!o.equals(this)){
+			super.addObserver(o);
+			followers.add((User)o);
+			((User)o).followings.add(this); 
+		}
 	}
 	/**
 	 * Post a message to this User's newsfeed.
 	 * 
 	 * @param message the message to be posted.
 	 */
-	public void postMessage(String message){
-		message = "@"+visibleID+" "+message;
+	public void postMessage(Message message){
+		message.setContent("@"+visibleID+" "+message.getContent());
 		if(message!=null){
 			newsFeed.add(0,message);
 			setChanged();
@@ -63,8 +65,8 @@ public class User extends Observable implements Observer, MyComponent{
 	}
 
 	public void update(Observable o, Object arg) {
-		if(arg instanceof String){
-			newsFeed.add(0,(String)arg);
+		if(arg instanceof Message){
+			newsFeed.add(0,(Message)arg);
 		}
 	}
 
@@ -103,7 +105,7 @@ public class User extends Observable implements Observer, MyComponent{
 	/**
 	 * @return the newsfeed of this User
 	 */
-	public DefaultListModel<String> getNewsFeed() {
+	public DefaultListModel<Message> getNewsFeed() {
 		return newsFeed;
 	}
 

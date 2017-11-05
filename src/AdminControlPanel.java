@@ -21,6 +21,7 @@ import data.UserGroup;
 import stats.CountElementUserGroupVisitor;
 import stats.CountElementUserVisitor;
 import stats.CountElementVisitor;
+import stats.CountMessagesVisitor;
 
 
 /**
@@ -89,7 +90,7 @@ public class AdminControlPanel implements ActionListener, FocusListener{
 		mainFrame.add(rightPanel);
 
 		//Display the window.
-		mainFrame.setPreferredSize(new Dimension(500, 400));
+		mainFrame.setPreferredSize(new Dimension(800, 300));
 		mainFrame.pack();
 		mainFrame.setVisible(true);
 	}
@@ -140,14 +141,14 @@ public class AdminControlPanel implements ActionListener, FocusListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == GetTotalUsers){
-			CountElementVisitor users = new CountElementUserVisitor();
-			root.accept(users);
-			JOptionPane.showMessageDialog(null,((CountElementUserVisitor)users).getUserCount());
+			CountElementVisitor visitor = new CountElementUserVisitor();
+			root.accept(visitor);
+			JOptionPane.showMessageDialog(null,((CountElementUserVisitor)visitor).getUserCount());
 		}
 		else if(arg0.getSource() == GetTotalUserGroups){
-			CountElementVisitor userGroups = new CountElementUserGroupVisitor();
-			root.accept(userGroups);
-			JOptionPane.showMessageDialog(null,((CountElementUserGroupVisitor)userGroups).getUserGroupCount());
+			CountElementVisitor visitor = new CountElementUserGroupVisitor();
+			root.accept(visitor);
+			JOptionPane.showMessageDialog(null,((CountElementUserGroupVisitor)visitor).getUserGroupCount());
 
 		}
 		else if(arg0.getSource() == OpenUserView){
@@ -203,10 +204,15 @@ public class AdminControlPanel implements ActionListener, FocusListener{
 			}
 		}
 		else if(arg0.getSource() == GetTotalMessages){
-			//to be implemented
+			CountElementVisitor visitor = new CountMessagesVisitor();
+			root.accept(visitor);
+			JOptionPane.showMessageDialog(null,((CountMessagesVisitor)visitor).getMessagesCount());
 		}
 		else if(arg0.getSource() == GetPositivePercent){
-			//to be implemented
+			CountElementVisitor visitor = new CountMessagesVisitor();
+			root.accept(visitor);
+			JOptionPane.showMessageDialog(null,((CountMessagesVisitor)visitor).getPositivePercent());
+			
 		}
 	}
 	private void updateTree(){
@@ -217,7 +223,15 @@ public class AdminControlPanel implements ActionListener, FocusListener{
 
 	@Override
 	public void focusGained(FocusEvent arg0) {
-		//nothing to be done here
+		if(arg0.getSource() == userId){
+			newUserId = userId.getText();
+
+		}
+		else if(arg0.getSource() == groupId){
+			newUserGroupId = groupId.getText();
+
+		}
+
 	}
 	@Override
 	public void focusLost(FocusEvent arg0) {

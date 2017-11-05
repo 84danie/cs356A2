@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.tree.DefaultTreeModel;
 
+import data.Message;
 import data.MyComponent;
 import data.User;
 import data.UserGroup;
@@ -31,7 +32,6 @@ public class UserView implements ActionListener, FocusListener{
 	private String followUser = "";
 	private String tweetMessage = "";
 
-	private DefaultTreeModel treeModel;
 	private User user;
 	private AdminControlPanel admin;
 
@@ -105,9 +105,6 @@ public class UserView implements ActionListener, FocusListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource() == followButton){
-			List<MyComponent> currentList = admin.getRoot().getChildUserGroup();
-			//User follow = new User(followUser);
-			//((User) currentList.get(currentList.indexOf(follow))).addObserver(user);
 			User follow = admin.getRoot().getUser(followUser);
 			if(follow!=null){
 				follow.addObserver(user);
@@ -120,7 +117,7 @@ public class UserView implements ActionListener, FocusListener{
 
 		}
 		else if(arg0.getSource() == tweetButton){
-			user.postMessage(tweetMessage);	
+			user.postMessage(new Message(tweetMessage));	
 			newsFeed.setModel(user.getNewsFeed());
 			tweet.setText("");
 		}

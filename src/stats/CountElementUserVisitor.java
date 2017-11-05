@@ -1,5 +1,8 @@
 package stats;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import data.User;
 import data.UserGroup;
 
@@ -13,5 +16,6 @@ public class CountElementUserVisitor implements CountElementVisitor{
 	public int getUserCount(){
 		return userCount;
 	}
+	
 	
 }
