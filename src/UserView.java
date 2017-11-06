@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.List;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -13,16 +11,12 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.tree.DefaultTreeModel;
-
 import data.Message;
-import data.Component;
 import data.User;
-import data.UserGroup;
 
 public class UserView implements ActionListener, FocusListener{
 	private JList<User> followers;
-	private JList newsFeed;
+	private JList<Message> newsFeed;
 	private JButton followButton;
 	private JButton tweetButton;
 	private JPanel followPanel;
@@ -53,6 +47,7 @@ public class UserView implements ActionListener, FocusListener{
 		mainFrame.pack();
 		mainFrame.setVisible(true);
 	}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void buildFollowPanel(){
 		followPanel = new JPanel(new GridLayout(2,1));
 		JPanel buttonPanel = new JPanel(new GridLayout(1,2));
@@ -70,12 +65,10 @@ public class UserView implements ActionListener, FocusListener{
 		if(user.getFollowings()!=null)
 			followers = new JList(user.getFollowings().toArray());
 		else
-			followers = new JList();
+			followers = new JList<User>();
 		
 		JScrollPane scroller = new JScrollPane(followers);
 		followPanel.add(scroller);
-
-
 	}
 	private void buildNewsFeedPanel(){
 		newsFeedPanel = new JPanel(new GridLayout(2,1));
@@ -92,9 +85,9 @@ public class UserView implements ActionListener, FocusListener{
 		newsFeedPanel.add(buttonPanel);
 		
 		if(user.getNewsFeed()!=null)
-			newsFeed = new JList(user.getNewsFeed());
+			newsFeed = new JList<Message>(user.getNewsFeed());
 		else
-			newsFeed = new JList();
+			newsFeed = new JList<Message>();
 		
 		JScrollPane scroller = new JScrollPane(newsFeed);
 		newsFeedPanel.add(scroller);
