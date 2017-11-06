@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.tree.DefaultTreeModel;
 
 import data.Message;
-import data.MyComponent;
+import data.Component;
 import data.User;
 import data.UserGroup;
 
@@ -41,10 +41,11 @@ public class UserView implements ActionListener, FocusListener{
 	}
 	public void display(){
 		JFrame mainFrame = new JFrame(user.toString());	
-
 		mainFrame.setLayout(new GridLayout(2,1));
+		
 		buildFollowPanel();
 		buildNewsFeedPanel();
+		
 		mainFrame.add(followPanel);
 		mainFrame.add(newsFeedPanel);
 
@@ -55,17 +56,22 @@ public class UserView implements ActionListener, FocusListener{
 	private void buildFollowPanel(){
 		followPanel = new JPanel(new GridLayout(2,1));
 		JPanel buttonPanel = new JPanel(new GridLayout(1,2));
+		
 		followButton = new JButton("Follow");
 		userId = new JTextField();
-		userId.addFocusListener(this);
+		
 		followButton.addActionListener(this);
+		userId.addFocusListener(this);
+		
 		buttonPanel.add(userId);
 		buttonPanel.add(followButton);
 		followPanel.add(buttonPanel);
+		
 		if(user.getFollowings()!=null)
 			followers = new JList(user.getFollowings().toArray());
 		else
 			followers = new JList();
+		
 		JScrollPane scroller = new JScrollPane(followers);
 		followPanel.add(scroller);
 
@@ -74,17 +80,22 @@ public class UserView implements ActionListener, FocusListener{
 	private void buildNewsFeedPanel(){
 		newsFeedPanel = new JPanel(new GridLayout(2,1));
 		JPanel buttonPanel = new JPanel(new GridLayout(1,2));
+		
 		tweetButton = new JButton("Tweet");
 		tweet = new JTextField();
-		tweet.addFocusListener(this);
+		
 		tweetButton.addActionListener(this);
+		tweet.addFocusListener(this);
+		
 		buttonPanel.add(tweet);
 		buttonPanel.add(tweetButton);
 		newsFeedPanel.add(buttonPanel);
+		
 		if(user.getNewsFeed()!=null)
 			newsFeed = new JList(user.getNewsFeed());
 		else
 			newsFeed = new JList();
+		
 		JScrollPane scroller = new JScrollPane(newsFeed);
 		newsFeedPanel.add(scroller);
 	}
@@ -107,19 +118,22 @@ public class UserView implements ActionListener, FocusListener{
 		if(arg0.getSource() == followButton){
 			User follow = admin.getRoot().getUser(followUser);
 			if(follow!=null){
+				userId.setText("");
 				follow.addObserver(user);
+				
 				DefaultListModel<User> model = new DefaultListModel<User>();
 				for(User u : user.getFollowings())
 					model.addElement(u);
+				
 				followers.setModel(model);
-				userId.setText("");
+				followUser="";				
 			}
-
 		}
 		else if(arg0.getSource() == tweetButton){
+			tweet.setText("");
 			user.postMessage(new Message(tweetMessage));	
 			newsFeed.setModel(user.getNewsFeed());
-			tweet.setText("");
+			tweetMessage = "";	
 		}
 
 	}

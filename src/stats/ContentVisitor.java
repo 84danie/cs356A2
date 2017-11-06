@@ -3,11 +3,13 @@ package stats;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.DefaultListModel;
+
 import data.Message;
 import data.User;
 
 
-public class CountMessagesVisitor implements CountElementVisitor{
+public class ContentVisitor implements Visitor{
 	private Set<Message> messages = new HashSet<Message>();
 	private String[] positive = {"good","great","fun","happy",
 								 "positive","yu sun","memes","meme",
@@ -17,10 +19,11 @@ public class CountMessagesVisitor implements CountElementVisitor{
 	private int numPositive = 0;
 	
 	public void visit(User u){
-		for(int i = 0; i <  u.getNewsFeed().size(); i++)
-			if(messages.add(u.getNewsFeed().getElementAt(i))){
+		DefaultListModel<Message> newsFeed = u.getNewsFeed();
+		for(int i = 0; i <  newsFeed.size(); i++)
+			if(messages.add(newsFeed.getElementAt(i))){
 				for(String s : positive){
-					if(u.getNewsFeed().getElementAt(i).getContent().contains(s)){
+					if(newsFeed.getElementAt(i).getContent().contains(s)){
 						numPositive++;			
 						break;
 					}

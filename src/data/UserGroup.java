@@ -5,21 +5,21 @@ import java.util.List;
 
 import javax.swing.tree.TreeNode;
 
-import stats.CountElementVisitor;
+import stats.Visitor;
 
-public class UserGroup implements MyComponent{
+public class UserGroup implements Component{
 	private String id;
-	private List<MyComponent> childUserGroups;
-	private MyComponent parent;
+	private List<Component> childUserGroups;
+	private Component parent;
 
 	public UserGroup(String id) {
 		if(id.isEmpty())
 			throw new IllegalArgumentException();
 		this.id = id;
-		this.childUserGroups = new ArrayList<MyComponent>();
+		this.childUserGroups = new ArrayList<Component>();
 		parent = null;
 	}
-	public boolean add(MyComponent u){
+	public boolean add(Component u){
 		if(!getRoot(this).contains(u)){
 			childUserGroups.add(u);
 			u.setParent(this);
@@ -31,53 +31,25 @@ public class UserGroup implements MyComponent{
 	public String toString(){
 		return id;
 	}
-	public List<MyComponent> getChildUserGroup(){
+	public List<Component> getChildUserGroup(){
 		return childUserGroups;
 	}
+	
 	@Override
-	public Enumeration<MyComponent> children() {
-		return (Enumeration<MyComponent>) childUserGroups;
-	}
-	@Override
-	public boolean getAllowsChildren() {
-		return true;
-	}
-	@Override
-	public TreeNode getChildAt(int childIndex) {
-		return childUserGroups.get(childIndex);
-	}
-	@Override
-	public int getChildCount() {
-		return childUserGroups.size();
-	}
-	@Override
-	public int getIndex(TreeNode node) {
-		return childUserGroups.indexOf(node);
-	}
-	@Override
-	public TreeNode getParent() {
-		return this.parent;
-	}
-	@Override
-	public boolean isLeaf() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public void setParent(MyComponent u) {
-		this.parent = (MyComponent) u;
+	public void setParent(Component u) {
+		this.parent = (Component) u;
 
 	}
 	@Override
-	public void accept(CountElementVisitor visitor) {
+	public void accept(Visitor visitor) {
 		visitor.visit(this);
-		for(MyComponent u : childUserGroups)
+		for(Component u : childUserGroups)
 			u.accept(visitor);		
 	}
 	@Override
 	public User getUser(String id){
 		if(!childUserGroups.isEmpty()){
-			for(MyComponent u : childUserGroups){
+			for(Component u : childUserGroups){
 				User c = u.getUser(id);
 				if(c!=null)
 					return c;
@@ -91,11 +63,11 @@ public class UserGroup implements MyComponent{
 		return getRoot((UserGroup) c.getParent());
 	}
 	@Override
-	public boolean contains(MyComponent c) {
+	public boolean contains(Component c) {
 		if(this.equals(c))
 			return true;
 		
-		for(MyComponent u : childUserGroups){
+		for(Component u : childUserGroups){
 			if(u.contains(c))
 				return true;
 		}
@@ -116,6 +88,38 @@ public class UserGroup implements MyComponent{
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	/*TreeNode methods*/
+	@Override
+	public boolean getAllowsChildren() {
+		return true;
+	}
+	@Override
+	public TreeNode getChildAt(int childIndex) {
+		return childUserGroups.get(childIndex);
+	}
+	@Override
+	public int getChildCount() {
+		return childUserGroups.size();
+	}
+	@Override
+	public int getIndex(TreeNode node) {
+		return childUserGroups.indexOf(node);
+	}
+	@Override
+	public TreeNode getParent() {
+		return this.parent;
+	}
+	/**
+	 * To maintain the composite design pattern logic,
+	 * a UserGroup is never considered a leaf, even if
+	 * it has no children.
+	 * 
+	 * @return false
+	 */
+	@Override
+	public boolean isLeaf() {
+		return false;
 	}
 
 }

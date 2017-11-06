@@ -1,14 +1,39 @@
 package data;
 
+/**
+ * A Message instance is identified by the time it was created (that is, when
+ * the constructor was called). 
+ *
+ */
 public class Message {
 	private long timestamp;
 	private String content;
 	
-	public Message(String message){
-		if(message.isEmpty())
+	/**
+	 * Constructor. 
+	 * @param message the content of this message
+	 * @throws IllegalArgumentException if the given message is null or empty
+	 */
+	public Message(String content){
+		if(content==null||content.isEmpty())
 			throw new IllegalArgumentException();
-		this.content = message;
+		this.content = content;
 		timestamp = System.currentTimeMillis();
+	}
+	/**
+	 * @return the content of this Message
+	 */
+	public String getContent() {
+		return content;
+	}
+	/**
+	 * Mutator for this Message's content. Only users/usergroups
+	 * can edit the content of a Message.
+	 * 
+	 * @param content the new content of this message
+	 */
+	protected void setContent(String content) {
+		this.content = content;
 	}
 	@Override
 	public int hashCode() {
@@ -30,12 +55,7 @@ public class Message {
 			return false;
 		return true;
 	}
-	public String getContent() {
-		return content;
-	}
-	public void setContent(String message) {
-		this.content = message;
-	}
+	
 	@Override
 	public String toString() {
 		return content;

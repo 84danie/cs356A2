@@ -2,28 +2,25 @@ package data;
 
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.UUID;
-
 import javax.swing.DefaultListModel;
 import javax.swing.tree.TreeNode;
 
-import stats.CountElementVisitor;
+import stats.Visitor;
 
 /**
  * User class. Users can follow and be followed by other users.
  *
  */
-public class User extends Observable implements Observer, MyComponent{
+public class User extends Observable implements Observer, Component{
 	private String id;
 	private String visibleID;
 	private List<User> followers;
 	private List<User> followings;
-	private DefaultListModel<Message> newsFeed;
-	private MyComponent parent;
+	private DefaultListModel<Message> newsFeed; 
+	private Component parent;
 
 	/**
 	 * Constructor for User.
@@ -39,12 +36,13 @@ public class User extends Observable implements Observer, MyComponent{
 		parent = null;
 	}
 	/** 
-	 * Add a new Observer (follower) to observe this User.
+	 * Add a new Observer (follower) to observe this User, unless
+	 * o is already following this User.
 	 * 
 	 * @param o the User that will follow this User
 	 */
 	public void addObserver(User o){
-		if(!o.equals(this)){
+		if(!o.equals(this)&&!followers.contains(o)){
 			super.addObserver(o);
 			followers.add((User)o);
 			((User)o).followings.add(this); 
@@ -63,7 +61,7 @@ public class User extends Observable implements Observer, MyComponent{
 			notifyObservers(message);
 		}
 	}
-
+	@Override
 	public void update(Observable o, Object arg) {
 		if(arg instanceof Message){
 			newsFeed.add(0,(Message)arg);
@@ -108,9 +106,27 @@ public class User extends Observable implements Observer, MyComponent{
 	public DefaultListModel<Message> getNewsFeed() {
 		return newsFeed;
 	}
+	@Override
+	public void setParent(Component u) {
+		parent = (Component) u.getParent();
 
-
-	/*==============TreeNode Methods==============*/
+	}
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visit(this);	
+	}
+	@Override
+	public User getUser(String id) {
+		if(this.visibleID.equalsIgnoreCase(id.trim()))
+			return this;
+		return null;
+	}
+	@Override
+	public boolean contains(Component c) {
+		if(c instanceof User)
+			return ((User)c).equals(this);
+		return false;
+	}
 
 	@Override
 	public int hashCode() {
@@ -135,10 +151,8 @@ public class User extends Observable implements Observer, MyComponent{
 			return false;
 		return true;
 	}
-	@Override
-	public Enumeration<MyComponent> children() {
-		return null;
-	}
+	/*==============TreeNode Methods==============*/
+	
 	@Override
 	public boolean getAllowsChildren() {
 		return false;
@@ -169,28 +183,4 @@ public class User extends Observable implements Observer, MyComponent{
 	public boolean isLeaf() {
 		return true;
 	}
-	@Override
-	public void setParent(MyComponent u) {
-		parent = (MyComponent) u.getParent();
-
-	}
-	@Override
-	public void accept(CountElementVisitor visitor) {
-		visitor.visit(this);	
-	}
-	@Override
-	public User getUser(String id) {
-		if(this.visibleID.equalsIgnoreCase(id.trim()))
-			return this;
-		return null;
-	}
-	@Override
-	public boolean contains(MyComponent c) {
-		if(c instanceof User)
-			return ((User)c).equals(this);
-		return false;
-	}
-
-
-
 }
