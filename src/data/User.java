@@ -25,9 +25,10 @@ public class User extends Observable implements Observer, Component{
 	/**
 	 * Constructor for User.
 	 * @param visibleID the visible ID of this User.
+	 * @throws IllegalArgumentException if visibleID is empty or null.
 	 */
 	public User(String visibleID) {
-		if(visibleID.isEmpty())
+		if(visibleID==null||visibleID.isEmpty())
 			throw new IllegalArgumentException();
 		this.visibleID = visibleID;
 		this.followers = new ArrayList<User>();
@@ -54,8 +55,8 @@ public class User extends Observable implements Observer, Component{
 	 * @param message the message to be posted.
 	 */
 	public void postMessage(Message message){
-		message.setContent("@"+visibleID+" "+message.getContent());
 		if(message!=null){
+			message.setContent("@"+visibleID+" "+message.getContent());
 			newsFeed.add(0,message);
 			setChanged();
 			notifyObservers(message);

@@ -6,18 +6,36 @@ import javax.swing.tree.TreeNode;
 
 import stats.Visitor;
 
+/**
+ * This Composite class represents a User group. A user group can have any number of
+ * other user groups or users.
+ *
+ */
 public class UserGroup implements Component{
 	private String id;
 	private List<Component> childUserGroups;
 	private Component parent;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param id the id of this User Group.
+	 * @throws IllegalArgumentException if id is null or empty
+	 */
 	public UserGroup(String id) {
-		if(id.isEmpty())
+		if(id==null||id.isEmpty())
 			throw new IllegalArgumentException();
 		this.id = id;
 		this.childUserGroups = new ArrayList<Component>();
 		parent = null;
 	}
+	/**
+	 * Adds another component (User or User group) to this User Group,
+	 * if it has not already been added.
+	 * 
+	 * @param u the component to be added
+	 * @return true if the component was successfully added, false otherwise
+	 */
 	public boolean add(Component u){
 		if(!getRoot(this).contains(u)){
 			childUserGroups.add(u);
@@ -30,6 +48,9 @@ public class UserGroup implements Component{
 	public String toString(){
 		return id;
 	}
+	/**
+	 * @return all child components of this User Group
+	 */
 	public List<Component> getChildUserGroup(){
 		return childUserGroups;
 	}
@@ -56,6 +77,13 @@ public class UserGroup implements Component{
 		}
 		return null;
 	}
+	/**
+	 * Private method for determining the absolute root
+	 * of this UserGroup.
+	 * 
+	 * @param c the current UserGroup whose absolute root will be determined
+	 * @return the root of c
+	 */
 	private UserGroup getRoot(UserGroup c){
 		if(c.getParent()==null)
 			return c;
@@ -88,6 +116,7 @@ public class UserGroup implements Component{
 			return false;
 		return true;
 	}
+	
 	/*TreeNode methods*/
 	@Override
 	public boolean getAllowsChildren() {

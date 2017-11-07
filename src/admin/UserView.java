@@ -1,3 +1,4 @@
+package admin;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -8,9 +9,12 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
 import data.Message;
 import data.User;
 
@@ -36,10 +40,10 @@ public class UserView implements ActionListener, FocusListener{
 	public void display(){
 		JFrame mainFrame = new JFrame(user.toString());	
 		mainFrame.setLayout(new GridLayout(2,1));
-		
+
 		buildFollowPanel();
 		buildNewsFeedPanel();
-		
+
 		mainFrame.add(followPanel);
 		mainFrame.add(newsFeedPanel);
 
@@ -51,44 +55,45 @@ public class UserView implements ActionListener, FocusListener{
 	private void buildFollowPanel(){
 		followPanel = new JPanel(new GridLayout(2,1));
 		JPanel buttonPanel = new JPanel(new GridLayout(1,2));
-		
+
 		followButton = new JButton("Follow");
 		userId = new JTextField();
-		
+
+		followButton.setToolTipText("Note: Sometimes the text doesn't register.\nIf the user you are trying to add is not found at first, try following them again.");
 		followButton.addActionListener(this);
 		userId.addFocusListener(this);
-		
+
 		buttonPanel.add(userId);
 		buttonPanel.add(followButton);
 		followPanel.add(buttonPanel);
-		
+
 		if(user.getFollowings()!=null)
 			followers = new JList(user.getFollowings().toArray());
 		else
 			followers = new JList<User>();
-		
+
 		JScrollPane scroller = new JScrollPane(followers);
 		followPanel.add(scroller);
 	}
 	private void buildNewsFeedPanel(){
 		newsFeedPanel = new JPanel(new GridLayout(2,1));
 		JPanel buttonPanel = new JPanel(new GridLayout(1,2));
-		
+
 		tweetButton = new JButton("Tweet");
 		tweet = new JTextField();
-		
+
 		tweetButton.addActionListener(this);
 		tweet.addFocusListener(this);
-		
+
 		buttonPanel.add(tweet);
 		buttonPanel.add(tweetButton);
 		newsFeedPanel.add(buttonPanel);
-		
+
 		if(user.getNewsFeed()!=null)
 			newsFeed = new JList<Message>(user.getNewsFeed());
 		else
 			newsFeed = new JList<Message>();
-		
+
 		JScrollPane scroller = new JScrollPane(newsFeed);
 		newsFeedPanel.add(scroller);
 	}
@@ -98,36 +103,47 @@ public class UserView implements ActionListener, FocusListener{
 	}
 	@Override
 	public void focusLost(FocusEvent e) {
-		if(e.getSource() == userId){
+		if(e.getSource() == userId)
 			followUser = userId.getText();
-		}
-		else if(e.getSource() == tweet){
+		else if(e.getSource() == tweet)
 			tweetMessage = tweet.getText();
-		}
-
 	}
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(arg0.getSource() == followButton){
-			User follow = admin.getRoot().getUser(followUser);
-			if(follow!=null){
-				userId.setText("");
-				follow.addObserver(user);
-				
-				DefaultListModel<User> model = new DefaultListModel<User>();
-				for(User u : user.getFollowings())
-					model.addElement(u);
-				
-				followers.setModel(model);
-				followUser="";				
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run(){
+				if(arg0.getSource() == followButton){
+					User follow = admin.getRoot().getUser(followUser);
+					if(follow!=null){
+						if(!follow.equals(user)){
+							follow.addObserver(user);
+
+							DefaultListModel<User> model = new DefaultListModel<User>();
+							for(User u : user.getFollowings())
+								model.addElement(u);
+
+							followers.setModel(model);
+							userId.setText("");
+							followUser="";		
+						}
+						else
+							JOptionPane.showMessageDialog(null,"Sorry, you cannot follow yourself.");
+					}
+					else
+						JOptionPane.showMessageDialog(null,"User not found.");
+				}
+				else if(arg0.getSource() == tweetButton){
+					try{
+						user.postMessage(new Message(tweetMessage));	
+					}catch (IllegalArgumentException e){
+						JOptionPane.showMessageDialog(null,"Cannot post an empty message.");
+					}
+					newsFeed.setModel(user.getNewsFeed());
+					tweet.setText("");
+					tweetMessage = "";	
+				}
 			}
-		}
-		else if(arg0.getSource() == tweetButton){
-			tweet.setText("");
-			user.postMessage(new Message(tweetMessage));	
-			newsFeed.setModel(user.getNewsFeed());
-			tweetMessage = "";	
-		}
+		});
 
 	}
 

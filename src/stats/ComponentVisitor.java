@@ -6,6 +6,11 @@ import java.util.Set;
 import data.User;
 import data.UserGroup;
 
+/**
+ * This visitor visits users and usergroups and obtains the total number of users
+ * and user groups. Sets are used in order to eliminate the need to "reset" any counters.
+ *
+ */
 public class ComponentVisitor implements Visitor{
 	private Set<UserGroup> userGroups = new HashSet<UserGroup>();
 	private Set<User> users = new HashSet<User>();

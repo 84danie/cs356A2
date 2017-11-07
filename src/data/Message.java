@@ -15,9 +15,7 @@ public class Message {
 	 * @throws IllegalArgumentException if the given message is null or empty
 	 */
 	public Message(String content){
-		if(content==null||content.isEmpty())
-			throw new IllegalArgumentException();
-		this.content = content;
+		setContent(content);
 		timestamp = System.currentTimeMillis();
 	}
 	/**
@@ -31,8 +29,11 @@ public class Message {
 	 * can edit the content of a Message.
 	 * 
 	 * @param content the new content of this message
+	 * @throws IllegalArgumentException if content is empty or null
 	 */
 	protected void setContent(String content) {
+		if(content==null||content.isEmpty())
+			throw new IllegalArgumentException();
 		this.content = content;
 	}
 	@Override

@@ -23,8 +23,7 @@ public interface Component extends TreeNode, Element{
 	/**
 	 * Returns the instance of a User with a given id.
 	 * @param id the id to be searched with
-	 * @return the User with @param id, if it exists in this
-	 * Component
+	 * @return the User with @param id, null if there is no such User
 	 */
 	public User getUser(String id);
 	

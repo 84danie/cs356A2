@@ -1,7 +1,8 @@
 package stats;
 
 /**
- * Element interface for visitor pattern.
+ * Element interface for visitor pattern. Classes that implement Element
+ * are able to accept Visitors.
  *
  */
 public interface Element {
