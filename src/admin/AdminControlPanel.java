@@ -1,6 +1,5 @@
 package admin;
 
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -25,13 +24,12 @@ import data.UserGroup;
 import stats.ComponentVisitor;
 import stats.ContentVisitor;
 
-
 /**
  * This class represents the admin control panel UI. Only one instance of the
  * Admin Control Panel class can be instantiated at a time. (Singleton pattern)
  *
  */
-public class AdminControlPanel implements ActionListener{
+public class AdminControlPanel implements ActionListener {
 	private static AdminControlPanel instance = null;
 	private JTree tree;
 	private JButton GetTotalUsers;
@@ -49,7 +47,8 @@ public class AdminControlPanel implements ActionListener{
 	private JButton AddGroup;
 	private DefaultTreeModel treeModel;
 
-	private AdminControlPanel() {}
+	private AdminControlPanel() {
+	}
 
 	/**
 	 * Get the instance of this AdminControlPanel.
@@ -58,10 +57,10 @@ public class AdminControlPanel implements ActionListener{
 	 * 
 	 * @return the current (and only) instance
 	 */
-	public static AdminControlPanel getInstance(){
-		if(instance==null){
-			synchronized(AdminControlPanel.class){
-				if(instance==null){
+	public static AdminControlPanel getInstance() {
+		if (instance == null) {
+			synchronized (AdminControlPanel.class) {
+				if (instance == null) {
 					instance = new AdminControlPanel();
 					instance.createAndShowGUI();
 				}
@@ -69,43 +68,40 @@ public class AdminControlPanel implements ActionListener{
 		}
 		return instance;
 	}
+
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 
-		if(arg0.getSource() == GetTotalUsers){
+		if (arg0.getSource() == GetTotalUsers) {
 			totalUsersButtonAction();
-		}
-		else if(arg0.getSource() == GetTotalUserGroups){
+		} else if (arg0.getSource() == GetTotalUserGroups) {
 			totalUserGroupsButtonAction();
-		}
-		else if(arg0.getSource() == OpenUserView){
+		} else if (arg0.getSource() == OpenUserView) {
 			openUserViewButtonAction();
-		}
-		else if(arg0.getSource() == AddUser){
+		} else if (arg0.getSource() == AddUser) {
 			addUserButtonAction();
-		}
-		else if(arg0.getSource() == AddGroup){
+		} else if (arg0.getSource() == AddGroup) {
 			addUserGroupButtonAction();
-		}
-		else if(arg0.getSource() == GetTotalMessages){
+		} else if (arg0.getSource() == GetTotalMessages) {
 			getTotalMessagesButtonAction();
-		}
-		else if(arg0.getSource() == GetPositivePercent){
+		} else if (arg0.getSource() == GetPositivePercent) {
 			getPositivePercentButtonAction();
 		}
 	}
+
 	/**
 	 * Protected method for UserView.
 	 * 
 	 * @return the root UserGroup of this AdminControlPanel.
 	 */
-	protected UserGroup getRoot(){
+	protected UserGroup getRoot() {
 		return root;
 	}
-	private  void createAndShowGUI() {
+
+	private void createAndShowGUI() {
 		setUpLookAndFeel();
 		root = new UserGroup("Root");
-		JFrame mainFrame = new JFrame("Admin Control Panel");	
+		JFrame mainFrame = new JFrame("Admin Control Panel");
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -127,7 +123,7 @@ public class AdminControlPanel implements ActionListener{
 		mainFrame.setVisible(true);
 	}
 
-	private void setUpLookAndFeel(){
+	private void setUpLookAndFeel() {
 		try {
 			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(info.getName())) {
@@ -140,8 +136,8 @@ public class AdminControlPanel implements ActionListener{
 		}
 	}
 
-	private void buildRightPanel(){
-		rightPanel = new JPanel(new GridLayout(3,1));
+	private void buildRightPanel() {
+		rightPanel = new JPanel(new GridLayout(3, 1));
 
 		buildCreatePanel();
 		buildContentPanel();
@@ -154,8 +150,8 @@ public class AdminControlPanel implements ActionListener{
 		rightPanel.add(contentPanel);
 	}
 
-	private void buildCreatePanel(){
-		createPanel = new JPanel(new GridLayout(2,2));
+	private void buildCreatePanel() {
+		createPanel = new JPanel(new GridLayout(2, 2));
 
 		userId = new JTextField();
 		groupId = new JTextField();
@@ -171,8 +167,8 @@ public class AdminControlPanel implements ActionListener{
 		createPanel.add(AddGroup);
 	}
 
-	private void buildContentPanel(){
-		contentPanel = new JPanel(new GridLayout(2,2));
+	private void buildContentPanel() {
+		contentPanel = new JPanel(new GridLayout(2, 2));
 
 		GetTotalUsers = new JButton("Total Users");
 		GetTotalUserGroups = new JButton("Total User Groups");
@@ -190,104 +186,100 @@ public class AdminControlPanel implements ActionListener{
 		contentPanel.add(GetPositivePercent);
 	}
 
-
-	private void totalUsersButtonAction(){
+	private void totalUsersButtonAction() {
 		ComponentVisitor visitor = new ComponentVisitor();
 		root.accept(visitor);
-		JOptionPane.showMessageDialog(null,visitor.getUserCount());
+		JOptionPane.showMessageDialog(null, visitor.getUserCount());
 	}
 
-	private void totalUserGroupsButtonAction(){
+	private void totalUserGroupsButtonAction() {
 		ComponentVisitor visitor = new ComponentVisitor();
 		root.accept(visitor);
-		JOptionPane.showMessageDialog(null,visitor.getUserGroupCount());
+		JOptionPane.showMessageDialog(null, visitor.getUserGroupCount());
 	}
 
-	private void openUserViewButtonAction(){
+	private void openUserViewButtonAction() {
 		TreeNode node = (TreeNode) tree.getLastSelectedPathComponent();
 
-		if (node == null || !node.isLeaf()){
-			JOptionPane.showMessageDialog(null,"Please Select a User");
+		if (node == null || !node.isLeaf()) {
+			JOptionPane.showMessageDialog(null, "Please Select a User","User View Error", JOptionPane.ERROR_MESSAGE);
 			return;
-		}
-		else if(node.isLeaf()){ //always a user
-			UserView view = new UserView((User) node,this);
+		} else if (node.isLeaf()) { // always a user
+			UserView view = new UserView((User) node, this);
 			view.display();
 		}
 	}
 
-	private void addUserButtonAction(){
+	private void addUserButtonAction() {
 		TreeNode node = (TreeNode) tree.getLastSelectedPathComponent();
 		String newUserId = userId.getText();
-		if(newUserId.isEmpty()){
-			return;	
-		}
-		if (node == null){
-			if(root.add(new User(newUserId))){
-				updateTree();
-				userId.setText("");
-			}
-			else
-				JOptionPane.showMessageDialog(null,"User already exists.");
-		}
-		else if(!node.isLeaf()){
-			if(((UserGroup) node).add((new User(newUserId)))){
-				updateTree();
-				userId.setText("");
-			}
-			else{
-				JOptionPane.showMessageDialog(null,"User already exists.");
-			}
-		}
-	}
-
-	private void addUserGroupButtonAction(){
-		TreeNode node = (TreeNode) tree.getLastSelectedPathComponent();
-		String newUserGroupId = groupId.getText();
-		if(newUserGroupId.isEmpty()){
+		if (newUserId.isEmpty()) {
 			return;
 		}
-		if (node == null){ //add to root by default
-			if(root.add(new UserGroup(newUserGroupId))){
+		if (node == null) { // add to root by default
+			if (root.add(new User(newUserId))) {
 				updateTree();
-				groupId.setText("");
-			}
-			else
-				JOptionPane.showMessageDialog(null,"User group already exists.");
-		}
-		else if(!node.isLeaf()){
-			if(((UserGroup) node).add((new UserGroup(newUserGroupId)))){
+				userId.setText("");
+			} else
+				JOptionPane.showMessageDialog(null, "User already exists.", "Admin Error", JOptionPane.ERROR_MESSAGE);
+		} else if (!node.isLeaf()) {
+			if (((UserGroup) node).add((new User(newUserId)))) {
 				updateTree();
-				groupId.setText("");
+				userId.setText("");
+			} else {
+				JOptionPane.showMessageDialog(null, "User already exists.", "Admin Error", JOptionPane.ERROR_MESSAGE);
 			}
-			else{
-				JOptionPane.showMessageDialog(null,"User group already exists.");
-			}
-		}
-		else{
-			JOptionPane.showMessageDialog(null,"Cannot add a user group to a user. "
-					+ "Please select a user group.");
+		} else {
+			JOptionPane.showMessageDialog(null, "Users can only be added to user groups.", "Admin Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
-	private void getTotalMessagesButtonAction(){
+	private void addUserGroupButtonAction() {
+		TreeNode node = (TreeNode) tree.getLastSelectedPathComponent();
+		String newUserGroupId = groupId.getText();
+		if (newUserGroupId.isEmpty()) {
+			return;
+		}
+		if (node == null) { // add to root by default
+			if (root.add(new UserGroup(newUserGroupId))) {
+				updateTree();
+				groupId.setText("");
+			} else {
+				JOptionPane.showMessageDialog(null, "User group already exists.", "Admin Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} else if (!node.isLeaf()) {
+			if (((UserGroup) node).add((new UserGroup(newUserGroupId)))) {
+				updateTree();
+				groupId.setText("");
+			} else {
+				JOptionPane.showMessageDialog(null, "User group already exists.", "Admin Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "Cannot add a user group to a user. " + "Please select a user group.",
+					"Admin Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void getTotalMessagesButtonAction() {
 		ContentVisitor visitor = new ContentVisitor();
 		root.accept(visitor);
-		JOptionPane.showMessageDialog(null,visitor.getMessagesCount());
+		JOptionPane.showMessageDialog(null, visitor.getMessagesCount());
 	}
 
-	private void getPositivePercentButtonAction(){
+	private void getPositivePercentButtonAction() {
 		DecimalFormat percent = new DecimalFormat("0.00");
 		ContentVisitor visitor = new ContentVisitor();
 		root.accept(visitor);
-		JOptionPane.showMessageDialog(null,percent.format(visitor.getPositivePercent())+"%");
+		JOptionPane.showMessageDialog(null, percent.format(visitor.getPositivePercent()) + "%");
 	}
 
-	private void updateTree(){
+	private void updateTree() {
 		treeModel.reload(root);
-		for (int i = 0; i < tree.getRowCount(); i++) 
+		for (int i = 0; i < tree.getRowCount(); i++) // keeps all paths visible
+			// by default
 			tree.expandRow(i);
 	}
-
-
 }

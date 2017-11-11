@@ -1,4 +1,5 @@
 package admin;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -15,7 +16,7 @@ import javax.swing.JTextField;
 import data.Message;
 import data.User;
 
-public class UserView implements ActionListener{
+public class UserView implements ActionListener {
 	private JList<User> followers;
 	private JList<Message> newsFeed;
 	private JButton followButton;
@@ -28,13 +29,14 @@ public class UserView implements ActionListener{
 	private User user;
 	private AdminControlPanel admin;
 
-	public UserView(User user, AdminControlPanel admin){
+	public UserView(User user, AdminControlPanel admin) {
 		this.user = user;
 		this.admin = admin;
 	}
-	public void display(){
-		JFrame mainFrame = new JFrame(user.toString());	
-		mainFrame.setLayout(new GridLayout(2,1));
+
+	public void display() {
+		JFrame mainFrame = new JFrame(user.toString());
+		mainFrame.setLayout(new GridLayout(2, 1));
 
 		buildFollowPanel();
 		buildNewsFeedPanel();
@@ -46,8 +48,9 @@ public class UserView implements ActionListener{
 		mainFrame.pack();
 		mainFrame.setVisible(true);
 	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void buildFollowPanel(){
+	private void buildFollowPanel() {
 		followPanel = new JPanel(new BorderLayout());
 		JPanel buttonPanel = new JPanel(new BorderLayout());
 
@@ -56,73 +59,71 @@ public class UserView implements ActionListener{
 
 		followButton.addActionListener(this);
 
-		buttonPanel.add(userId,BorderLayout.CENTER);
-		buttonPanel.add(followButton,BorderLayout.EAST);
-		followPanel.add(buttonPanel,BorderLayout.NORTH);
+		buttonPanel.add(userId, BorderLayout.CENTER);
+		buttonPanel.add(followButton, BorderLayout.EAST);
+		followPanel.add(buttonPanel, BorderLayout.NORTH);
 
-		if(user.getFollowings()!=null){
+		if (user.getFollowings() != null) {
 			followers = new JList(user.getFollowings().toArray());
-		}
-		else{
+		} else {
 			followers = new JList<User>();
 		}
 
 		JScrollPane scroller = new JScrollPane(followers);
-		followPanel.add(scroller,BorderLayout.CENTER);
+		followPanel.add(scroller, BorderLayout.CENTER);
 	}
-	private void buildNewsFeedPanel(){
-		newsFeedPanel = new JPanel(new GridLayout(2,1));
+
+	private void buildNewsFeedPanel() {
+		newsFeedPanel = new JPanel(new GridLayout(2, 1));
 		JPanel buttonPanel = new JPanel(new BorderLayout());
 
 		tweetButton = new JButton("Tweet");
 		tweet = new JTextField();
 
 		tweetButton.addActionListener(this);
-		
 
-		buttonPanel.add(tweet,BorderLayout.CENTER);
-		buttonPanel.add(tweetButton,BorderLayout.EAST);
+		buttonPanel.add(tweet, BorderLayout.CENTER);
+		buttonPanel.add(tweetButton, BorderLayout.EAST);
 		newsFeedPanel.add(buttonPanel);
 
-		if(user.getNewsFeed()!=null){
+		if (user.getNewsFeed() != null) {
 			newsFeed = new JList<Message>(user.getNewsFeed());
-		}
-		else{
+		} else {
 			newsFeed = new JList<Message>();
 		}
 
 		JScrollPane scroller = new JScrollPane(newsFeed);
 		newsFeedPanel.add(scroller);
 	}
+
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 
-		if(arg0.getSource() == followButton){
+		if (arg0.getSource() == followButton) {
 			User follow = admin.getRoot().getUser(userId.getText());
-			if(follow!=null){
-				if(!follow.equals(user)){
+			if (follow != null) {
+				if (!follow.equals(user)) {
 					follow.addObserver(user);
 
 					DefaultListModel<User> model = new DefaultListModel<User>();
-					for(User u : user.getFollowings())
+					for (User u : user.getFollowings())
 						model.addElement(u);
 
 					followers.setModel(model);
-					userId.setText("");	
+					userId.setText("");
+				} else {
+					JOptionPane.showMessageDialog(null, "Sorry, you cannot follow yourself.", "User View Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
-				else{
-					JOptionPane.showMessageDialog(null,"Sorry, you cannot follow yourself.");
-				}
+			} else {
+				JOptionPane.showMessageDialog(null, "User not found.", "User View Error", JOptionPane.ERROR_MESSAGE);
 			}
-			else{
-				JOptionPane.showMessageDialog(null,"User not found.");
-			}
-		}
-		else if(arg0.getSource() == tweetButton){
-			try{
-				user.postMessage(new Message(tweet.getText()));	
-			}catch (IllegalArgumentException e){
-				JOptionPane.showMessageDialog(null,"Cannot post an empty message.");
+		} else if (arg0.getSource() == tweetButton) {
+			try {
+				user.postMessage(new Message(tweet.getText()));
+			} catch (IllegalArgumentException e) {
+				JOptionPane.showMessageDialog(null, "Cannot post an empty message.", "User View Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			newsFeed.setModel(user.getNewsFeed());
 			tweet.setText("");
