@@ -20,12 +20,11 @@ public class UserGroup implements Component{
 	 * Constructor.
 	 * 
 	 * @param id the id of this User Group.
-	 * @throws IllegalArgumentException if id is null or empty
+	 * @throws NullPointerException if id is null.
+	 * @throws IllegalArgumentException if id is empty.
 	 */
 	public UserGroup(String id) {
-		if(id==null||id.isEmpty())
-			throw new IllegalArgumentException();
-		this.id = id;
+		setId(id);
 		this.childUserGroups = new ArrayList<Component>();
 		parent = null;
 	}
@@ -77,47 +76,41 @@ public class UserGroup implements Component{
 		}
 		return null;
 	}
-	/**
-	 * Private method for determining the absolute root
-	 * of this UserGroup.
-	 * 
-	 * @param c the current UserGroup whose absolute root will be determined
-	 * @return the root of c
-	 */
-	private UserGroup getRoot(UserGroup c){
-		if(c.getParent()==null)
-			return c;
-		return getRoot((UserGroup) c.getParent());
-	}
+	
 	@Override
 	public boolean contains(Component c) {
-		if(this.equals(c))
+		if(this.equals(c)){
 			return true;
-		
+		}
 		for(Component u : childUserGroups){
-			if(u.contains(c))
+			if(u.contains(c)){
 				return true;
+			}
 		}
 		return false;
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj){
 			return true;
-		if (obj == null)
+		}
+		if (obj == null){
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()){
 			return false;
+		}
 		UserGroup other = (UserGroup) obj;
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null){
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)){
 			return false;
+		}
 		return true;
 	}
 	
-	/*TreeNode methods*/
 	@Override
 	public boolean getAllowsChildren() {
 		return true;
@@ -148,6 +141,23 @@ public class UserGroup implements Component{
 	@Override
 	public boolean isLeaf() {
 		return false;
+	}
+	private void setId(String id){
+		if(id==null){
+			throw new NullPointerException();
+		}
+		else if(id.isEmpty()){
+			throw new IllegalArgumentException();
+		}
+		id = id.toLowerCase().trim();
+		id = id.substring(0, 1).toUpperCase()+id.substring(1);
+		this.id = id;
+	}
+	private UserGroup getRoot(UserGroup c){
+		if(c.getParent()==null){
+			return c;
+		}
+		return getRoot((UserGroup) c.getParent());
 	}
 
 }

@@ -16,14 +16,14 @@ public interface Component extends TreeNode, Element{
 	/**
 	 * Sets the parent of this Component. 
 	 * 
-	 * @param u
+	 * @param u the Component to be set as the parent
+	 * @throws IllegalArgumentException if u is null
 	 */
 	public void setParent(Component u);	
 	
 	/**
-	 * Returns the instance of a User with a given id.
 	 * @param id the id to be searched with
-	 * @return the User with @param id, null if there is no such User
+	 * @return the User with this id, null if there is no such User
 	 */
 	public User getUser(String id);
 	
@@ -37,10 +37,10 @@ public interface Component extends TreeNode, Element{
 	/**
 	 * This method is not used in this implementation.
 	 * 
-	 * @return null
+	 * @throws UnsupportedOperationException
 	 */
 	@Override
 	public default Enumeration<Component> children() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 }

@@ -11,7 +11,7 @@ public class Message {
 	
 	/**
 	 * Constructor. 
-	 * @param message the content of this message
+	 * @param content the content of this message
 	 * @throws IllegalArgumentException if the given message is null or empty
 	 */
 	public Message(String content){

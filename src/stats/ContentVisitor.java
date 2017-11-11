@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ListModel;
 
 import data.Message;
 import data.User;
@@ -28,26 +29,36 @@ public class ContentVisitor implements Visitor{
 							"coffee","joyful","christmas","family",
 													"fortune"};
 	private int numPositive = 0;
-
+	
+	@Override
 	public void visit(User u){
-		DefaultListModel<Message> newsFeed = u.getNewsFeed();
-		for(int i = 0; i <  newsFeed.size(); i++)
+		ListModel<Message> newsFeed =  u.getNewsFeed();
+		for(int i = 0; i <  newsFeed.getSize(); i++)
 			if(messages.add(newsFeed.getElementAt(i))){
-				for(String s : positive){
-					if(newsFeed.getElementAt(i).getContent().contains(s)){
-						numPositive++;			
-						break;
-					}
-				}
+				checkPositiveMsgs(newsFeed.getElementAt(i));
 			}
 	}
+	/**
+	 * @return the total number of messages sent
+	 */
 	public int getMessagesCount(){
 		return messages.size();
 	}
+	/**
+	 * @return the total percent of positive messages sent
+	 */
 	public double getPositivePercent(){
 		if(getMessagesCount()==0)
 			return 0;
 		return (numPositive / (double)getMessagesCount())*100;
+	}
+	private void checkPositiveMsgs(Message message){
+		for(String s : positive){
+			if(message.getContent().contains(s)){
+				numPositive++;			
+				break;
+			}
+		}
 	}
 
 }

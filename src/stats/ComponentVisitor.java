@@ -23,9 +23,15 @@ public class ComponentVisitor implements Visitor{
 	public void visit(User u) {
 		users.add(u);	
 	}
+	/**
+	 * @return the total number of UserGroups
+	 */
 	public int getUserGroupCount(){
 		return userGroups.size();
 	}
+	/**
+	 * @return the total number of Users
+	 */
 	public int getUserCount(){
 		return users.size();
 	}

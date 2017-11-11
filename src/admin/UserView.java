@@ -59,7 +59,6 @@ public class UserView implements ActionListener, FocusListener{
 		followButton = new JButton("Follow");
 		userId = new JTextField();
 
-		followButton.setToolTipText("Note: Sometimes the text doesn't register.\nIf the user you are trying to add is not found at first, try following them again.");
 		followButton.addActionListener(this);
 		userId.addFocusListener(this);
 
@@ -67,10 +66,12 @@ public class UserView implements ActionListener, FocusListener{
 		buttonPanel.add(followButton);
 		followPanel.add(buttonPanel);
 
-		if(user.getFollowings()!=null)
+		if(user.getFollowings()!=null){
 			followers = new JList(user.getFollowings().toArray());
-		else
+		}
+		else{
 			followers = new JList<User>();
+		}
 
 		JScrollPane scroller = new JScrollPane(followers);
 		followPanel.add(scroller);
@@ -89,10 +90,12 @@ public class UserView implements ActionListener, FocusListener{
 		buttonPanel.add(tweetButton);
 		newsFeedPanel.add(buttonPanel);
 
-		if(user.getNewsFeed()!=null)
+		if(user.getNewsFeed()!=null){
 			newsFeed = new JList<Message>(user.getNewsFeed());
-		else
+		}
+		else{
 			newsFeed = new JList<Message>();
+		}
 
 		JScrollPane scroller = new JScrollPane(newsFeed);
 		newsFeedPanel.add(scroller);
@@ -103,10 +106,12 @@ public class UserView implements ActionListener, FocusListener{
 	}
 	@Override
 	public void focusLost(FocusEvent e) {
-		if(e.getSource() == userId)
+		if(e.getSource() == userId){
 			followUser = userId.getText();
-		else if(e.getSource() == tweet)
+		}
+		else if(e.getSource() == tweet){
 			tweetMessage = tweet.getText();
+		}
 	}
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -126,11 +131,13 @@ public class UserView implements ActionListener, FocusListener{
 							userId.setText("");
 							followUser="";		
 						}
-						else
+						else{
 							JOptionPane.showMessageDialog(null,"Sorry, you cannot follow yourself.");
+						}
 					}
-					else
+					else{
 						JOptionPane.showMessageDialog(null,"User not found.");
+					}
 				}
 				else if(arg0.getSource() == tweetButton){
 					try{
