@@ -29,11 +29,16 @@ public class Message {
 	 * can edit the content of a Message.
 	 * 
 	 * @param content the new content of this message
-	 * @throws IllegalArgumentException if content is empty or null
+	 * @throws NullPointerException if content is null
+	 * @throws IllegalArgumentException if content is empty
 	 */
 	protected void setContent(String content) {
-		if(content==null||content.isEmpty())
+		if(content==null){
+			throw new NullPointerException();
+		}
+		else if(content.isEmpty()){
 			throw new IllegalArgumentException();
+		}
 		this.content = content;
 	}
 	@Override
@@ -45,15 +50,19 @@ public class Message {
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj){
 			return true;
-		if (obj == null)
+		}
+		if (obj == null){
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()){
 			return false;
+		}
 		Message other = (Message) obj;
-		if (timestamp != other.timestamp)
+		if (timestamp != other.timestamp){
 			return false;
+		}
 		return true;
 	}
 	

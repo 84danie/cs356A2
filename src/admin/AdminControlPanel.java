@@ -202,7 +202,7 @@ public class AdminControlPanel implements ActionListener {
 		TreeNode node = (TreeNode) tree.getLastSelectedPathComponent();
 
 		if (node == null || !node.isLeaf()) {
-			JOptionPane.showMessageDialog(null, "Please Select a User","User View Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Please Select a User", "User View Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		} else if (node.isLeaf()) { // always a user
 			UserView view = new UserView((User) node, this);
