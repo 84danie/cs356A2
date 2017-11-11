@@ -3,7 +3,6 @@ package stats;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 
 import data.Message;

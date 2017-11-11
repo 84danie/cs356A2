@@ -1,10 +1,9 @@
 package admin;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -13,12 +12,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
 import data.Message;
 import data.User;
 
-public class UserView implements ActionListener, FocusListener{
+public class UserView implements ActionListener{
 	private JList<User> followers;
 	private JList<Message> newsFeed;
 	private JButton followButton;
@@ -27,8 +24,6 @@ public class UserView implements ActionListener, FocusListener{
 	private JPanel newsFeedPanel;
 	private JTextField tweet;
 	private JTextField userId;
-	private String followUser = "";
-	private String tweetMessage = "";
 
 	private User user;
 	private AdminControlPanel admin;
@@ -53,18 +48,17 @@ public class UserView implements ActionListener, FocusListener{
 	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void buildFollowPanel(){
-		followPanel = new JPanel(new GridLayout(2,1));
-		JPanel buttonPanel = new JPanel(new GridLayout(1,2));
+		followPanel = new JPanel(new BorderLayout());
+		JPanel buttonPanel = new JPanel(new BorderLayout());
 
 		followButton = new JButton("Follow");
 		userId = new JTextField();
 
 		followButton.addActionListener(this);
-		userId.addFocusListener(this);
 
-		buttonPanel.add(userId);
-		buttonPanel.add(followButton);
-		followPanel.add(buttonPanel);
+		buttonPanel.add(userId,BorderLayout.CENTER);
+		buttonPanel.add(followButton,BorderLayout.EAST);
+		followPanel.add(buttonPanel,BorderLayout.NORTH);
 
 		if(user.getFollowings()!=null){
 			followers = new JList(user.getFollowings().toArray());
@@ -74,20 +68,20 @@ public class UserView implements ActionListener, FocusListener{
 		}
 
 		JScrollPane scroller = new JScrollPane(followers);
-		followPanel.add(scroller);
+		followPanel.add(scroller,BorderLayout.CENTER);
 	}
 	private void buildNewsFeedPanel(){
 		newsFeedPanel = new JPanel(new GridLayout(2,1));
-		JPanel buttonPanel = new JPanel(new GridLayout(1,2));
+		JPanel buttonPanel = new JPanel(new BorderLayout());
 
 		tweetButton = new JButton("Tweet");
 		tweet = new JTextField();
 
 		tweetButton.addActionListener(this);
-		tweet.addFocusListener(this);
+		
 
-		buttonPanel.add(tweet);
-		buttonPanel.add(tweetButton);
+		buttonPanel.add(tweet,BorderLayout.CENTER);
+		buttonPanel.add(tweetButton,BorderLayout.EAST);
 		newsFeedPanel.add(buttonPanel);
 
 		if(user.getNewsFeed()!=null){
@@ -101,57 +95,37 @@ public class UserView implements ActionListener, FocusListener{
 		newsFeedPanel.add(scroller);
 	}
 	@Override
-	public void focusGained(FocusEvent e) {
-		// nothing to be done here
-	}
-	@Override
-	public void focusLost(FocusEvent e) {
-		if(e.getSource() == userId){
-			followUser = userId.getText();
-		}
-		else if(e.getSource() == tweet){
-			tweetMessage = tweet.getText();
-		}
-	}
-	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		SwingUtilities.invokeLater(new Runnable(){
-			public void run(){
-				if(arg0.getSource() == followButton){
-					User follow = admin.getRoot().getUser(followUser);
-					if(follow!=null){
-						if(!follow.equals(user)){
-							follow.addObserver(user);
 
-							DefaultListModel<User> model = new DefaultListModel<User>();
-							for(User u : user.getFollowings())
-								model.addElement(u);
+		if(arg0.getSource() == followButton){
+			User follow = admin.getRoot().getUser(userId.getText());
+			if(follow!=null){
+				if(!follow.equals(user)){
+					follow.addObserver(user);
 
-							followers.setModel(model);
-							userId.setText("");
-							followUser="";		
-						}
-						else{
-							JOptionPane.showMessageDialog(null,"Sorry, you cannot follow yourself.");
-						}
-					}
-					else{
-						JOptionPane.showMessageDialog(null,"User not found.");
-					}
+					DefaultListModel<User> model = new DefaultListModel<User>();
+					for(User u : user.getFollowings())
+						model.addElement(u);
+
+					followers.setModel(model);
+					userId.setText("");	
 				}
-				else if(arg0.getSource() == tweetButton){
-					try{
-						user.postMessage(new Message(tweetMessage));	
-					}catch (IllegalArgumentException e){
-						JOptionPane.showMessageDialog(null,"Cannot post an empty message.");
-					}
-					newsFeed.setModel(user.getNewsFeed());
-					tweet.setText("");
-					tweetMessage = "";	
+				else{
+					JOptionPane.showMessageDialog(null,"Sorry, you cannot follow yourself.");
 				}
 			}
-		});
-
+			else{
+				JOptionPane.showMessageDialog(null,"User not found.");
+			}
+		}
+		else if(arg0.getSource() == tweetButton){
+			try{
+				user.postMessage(new Message(tweet.getText()));	
+			}catch (IllegalArgumentException e){
+				JOptionPane.showMessageDialog(null,"Cannot post an empty message.");
+			}
+			newsFeed.setModel(user.getNewsFeed());
+			tweet.setText("");
+		}
 	}
-
 }
