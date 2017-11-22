@@ -5,14 +5,20 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.util.Calendar;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
 import data.Message;
 import data.User;
 
@@ -25,6 +31,8 @@ public class UserView implements ActionListener {
 	private JPanel newsFeedPanel;
 	private JTextField tweet;
 	private JTextField userId;
+	private JButton lastUpdated;
+	private Calendar creationTime;
 
 	private User user;
 	private AdminControlPanel admin;
@@ -44,7 +52,7 @@ public class UserView implements ActionListener {
 		mainFrame.add(followPanel);
 		mainFrame.add(newsFeedPanel);
 
-		mainFrame.setPreferredSize(new Dimension(300, 200));
+		mainFrame.setPreferredSize(new Dimension(300, 300));
 		mainFrame.pack();
 		mainFrame.setVisible(true);
 	}
@@ -58,7 +66,14 @@ public class UserView implements ActionListener {
 		userId = new JTextField();
 
 		followButton.addActionListener(this);
-
+		
+		creationTime = Calendar.getInstance();
+		creationTime.setTimeInMillis(user.getCreationTime());
+		String creationDisplay = "Created: "+creationTime.getTime().toString();
+		JLabel creation = new JLabel(creationDisplay);
+		creation.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		buttonPanel.add(creation,BorderLayout.NORTH);
 		buttonPanel.add(userId, BorderLayout.CENTER);
 		buttonPanel.add(followButton, BorderLayout.EAST);
 		followPanel.add(buttonPanel, BorderLayout.NORTH);
@@ -74,13 +89,16 @@ public class UserView implements ActionListener {
 	}
 
 	private void buildNewsFeedPanel() {
-		newsFeedPanel = new JPanel(new GridLayout(2, 1));
+		newsFeedPanel = new JPanel(new GridLayout(3, 1));
 		JPanel buttonPanel = new JPanel(new BorderLayout());
 
 		tweetButton = new JButton("Tweet");
 		tweet = new JTextField();
 
 		tweetButton.addActionListener(this);
+		
+		lastUpdated = new JButton("Get Last Update Time");
+		lastUpdated.addActionListener(this);
 
 		buttonPanel.add(tweet, BorderLayout.CENTER);
 		buttonPanel.add(tweetButton, BorderLayout.EAST);
@@ -94,6 +112,7 @@ public class UserView implements ActionListener {
 
 		JScrollPane scroller = new JScrollPane(newsFeed);
 		newsFeedPanel.add(scroller);
+		newsFeedPanel.add(lastUpdated);
 	}
 
 	@Override
@@ -127,6 +146,11 @@ public class UserView implements ActionListener {
 			}
 			newsFeed.setModel(user.getNewsFeed());
 			tweet.setText("");
+		}
+		else if(arg0.getSource() == lastUpdated){
+			creationTime.setTimeInMillis(user.getLastUpdateTime());
+			String lastUpdateDisplay = "Last Updated: "+creationTime.getTime().toString();
+			JOptionPane.showMessageDialog(null, lastUpdateDisplay);
 		}
 	}
 }

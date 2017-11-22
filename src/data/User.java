@@ -16,12 +16,13 @@ import stats.Visitor;
  *
  */
 public class User extends Observable implements Observer, Component{
-	private String id;
 	private String visibleID;
 	private List<User> followers;
 	private List<User> followings;
 	private DefaultListModel<Message> newsFeed; 
 	private Component parent;
+	private long creationTime;
+	private long lastUpdateTime;
 
 	/**
 	 * Constructor.
@@ -35,6 +36,8 @@ public class User extends Observable implements Observer, Component{
 		this.followings = new ArrayList<User>();
 		this.newsFeed = new DefaultListModel<Message>();
 		parent = null;
+		creationTime = System.currentTimeMillis();
+		lastUpdateTime = creationTime; 
 	}
 	/** 
 	 * Add a new Observer (follower) to observe this User, unless
@@ -73,19 +76,26 @@ public class User extends Observable implements Observer, Component{
 	public void update(Observable o, Object arg) {
 		if(arg instanceof Message){
 			newsFeed.add(0,(Message)arg);
+			lastUpdateTime = System.currentTimeMillis();
 		}
-	}
-	/**
-	 * @return the unique id of this User
-	 */
-	public String getId() {
-		return id;
 	}
 	/**
 	 * @return the visible id of this User
 	 */
 	public String getVisibleID() {
 		return visibleID;
+	}
+	/**
+	 * @return the creation time in milliseconds 
+	 */
+	public long getCreationTime(){
+		return creationTime;
+	}
+	/**
+	 * @return the time as which this user was last updated
+	 */
+	public long getLastUpdateTime(){
+		return lastUpdateTime;
 	}
 	/**
 	 * @return the List of Users following this User

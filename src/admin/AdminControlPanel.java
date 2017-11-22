@@ -23,6 +23,8 @@ import data.User;
 import data.UserGroup;
 import stats.ComponentVisitor;
 import stats.ContentVisitor;
+import stats.UpdateVisitor;
+import stats.ValidateVisitor;
 
 /**
  * This class represents the admin control panel UI. Only one instance of the
@@ -37,6 +39,8 @@ public class AdminControlPanel implements ActionListener {
 	private JButton OpenUserView;
 	private JButton GetTotalMessages;
 	private JButton GetPositivePercent;
+	private JButton CheckValidity;
+	private JButton GetLastUpdated;
 	private UserGroup root;
 	private JPanel rightPanel;
 	private JPanel createPanel;
@@ -74,18 +78,30 @@ public class AdminControlPanel implements ActionListener {
 
 		if (arg0.getSource() == GetTotalUsers) {
 			totalUsersButtonAction();
-		} else if (arg0.getSource() == GetTotalUserGroups) {
+		} 
+		else if (arg0.getSource() == GetTotalUserGroups) {
 			totalUserGroupsButtonAction();
-		} else if (arg0.getSource() == OpenUserView) {
+		} 
+		else if (arg0.getSource() == OpenUserView) {
 			openUserViewButtonAction();
-		} else if (arg0.getSource() == AddUser) {
+		} 
+		else if (arg0.getSource() == AddUser) {
 			addUserButtonAction();
-		} else if (arg0.getSource() == AddGroup) {
+		}
+		else if (arg0.getSource() == AddGroup) {
 			addUserGroupButtonAction();
-		} else if (arg0.getSource() == GetTotalMessages) {
+		} 
+		else if (arg0.getSource() == GetTotalMessages) {
 			getTotalMessagesButtonAction();
-		} else if (arg0.getSource() == GetPositivePercent) {
+		} 
+		else if (arg0.getSource() == GetPositivePercent) {
 			getPositivePercentButtonAction();
+		}
+		else if (arg0.getSource() == CheckValidity){
+			checkValidityButtonAction();
+		}
+		else if(arg0.getSource() == GetLastUpdated){
+			getLastUpdatedUserButtonAction();
 		}
 	}
 
@@ -114,6 +130,12 @@ public class AdminControlPanel implements ActionListener {
 
 		JScrollPane treeView = new JScrollPane(tree);
 		mainFrame.add(treeView, BorderLayout.CENTER);
+		
+		
+		
+		GetLastUpdated = new JButton("Get Last Updated User");
+		GetLastUpdated.addActionListener(this);
+		mainFrame.add(GetLastUpdated,BorderLayout.SOUTH);
 
 		buildRightPanel();
 		mainFrame.add(rightPanel, BorderLayout.EAST);
@@ -137,17 +159,22 @@ public class AdminControlPanel implements ActionListener {
 	}
 
 	private void buildRightPanel() {
-		rightPanel = new JPanel(new GridLayout(3, 1));
+		rightPanel = new JPanel(new GridLayout(4, 1));
 
 		buildCreatePanel();
 		buildContentPanel();
 
+		CheckValidity = new JButton("Check Validity");
+		CheckValidity.addActionListener(this);
+		
 		OpenUserView = new JButton("Open User View");
 		OpenUserView.addActionListener(this);
 
 		rightPanel.add(createPanel);
+		rightPanel.add(CheckValidity);
 		rightPanel.add(OpenUserView);
 		rightPanel.add(contentPanel);
+		
 	}
 
 	private void buildCreatePanel() {
@@ -174,16 +201,19 @@ public class AdminControlPanel implements ActionListener {
 		GetTotalUserGroups = new JButton("Total User Groups");
 		GetTotalMessages = new JButton("Total Messages");
 		GetPositivePercent = new JButton("Positive Percentage");
+		
 
 		GetTotalUsers.addActionListener(this);
 		GetTotalUserGroups.addActionListener(this);
 		GetTotalMessages.addActionListener(this);
 		GetPositivePercent.addActionListener(this);
+		
 
 		contentPanel.add(GetTotalUsers);
 		contentPanel.add(GetTotalUserGroups);
 		contentPanel.add(GetTotalMessages);
 		contentPanel.add(GetPositivePercent);
+	
 	}
 
 	private void totalUsersButtonAction() {
@@ -274,6 +304,30 @@ public class AdminControlPanel implements ActionListener {
 		ContentVisitor visitor = new ContentVisitor();
 		root.accept(visitor);
 		JOptionPane.showMessageDialog(null, percent.format(visitor.getPositivePercent()) + "%");
+	}
+	private void checkValidityButtonAction(){
+		ValidateVisitor visitor = new ValidateVisitor();
+		root.accept(visitor);
+		if(visitor.isValid()){
+			JOptionPane.showMessageDialog(null, "All user groups and users have valid names.");
+		}
+		else{
+			JOptionPane.showMessageDialog(null, "Not all user groups and users have valid names.",
+													"Admin Alert", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	private void getLastUpdatedUserButtonAction(){
+		UpdateVisitor visitor = new UpdateVisitor();
+		root.accept(visitor);
+		User lastUpdated = visitor.getLastUpdatedUser();
+		if(lastUpdated!=null){
+			JOptionPane.showMessageDialog(null,"The last user updated was "+lastUpdated );
+		}
+		else{
+			JOptionPane.showMessageDialog(null, "Cannot fetch last updated user "
+										+ "because no users have been added.",
+										"Admin Alert", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private void updateTree() {

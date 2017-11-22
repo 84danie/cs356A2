@@ -15,6 +15,7 @@ public class UserGroup implements Component{
 	private String id;
 	private List<Component> childUserGroups;
 	private Component parent;
+	private long creationTime;
 
 	/**
 	 * Constructor.
@@ -27,6 +28,7 @@ public class UserGroup implements Component{
 		setId(id);
 		this.childUserGroups = new ArrayList<Component>();
 		parent = null;
+		creationTime = System.currentTimeMillis();
 	}
 	/**
 	 * Adds another component (User or User group) to this User Group,
@@ -46,6 +48,12 @@ public class UserGroup implements Component{
 	@Override
 	public String toString(){
 		return id;
+	}
+	public String getId(){
+		return id;
+	}
+	public long getCreationTime(){
+		return creationTime;
 	}
 	/**
 	 * @return all child components of this User Group
